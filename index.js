@@ -9,7 +9,7 @@ var colors = require('colors/safe')
 //MongoDB Connection
 var db;
 const MongoClient = require('mongodb').MongoClient
-MongoClient.connect('mongodb://root:798140sa@ds153239.mlab.com:53239/nodexpress', (err, database) => {
+MongoClient.connect('mongodb://<username>:<password>@ds153239.mlab.com:53239/nodexpress', (err, database) => {
   if (err) return console.log(err)
   db = database;
 });
