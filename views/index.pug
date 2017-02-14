@@ -1,0 +1,35 @@
+html
+	head
+		title=title
+		style(type='text/css').
+			.badge {
+				width: 40%;
+				height: auto;
+				background: #e5e5e5;
+				color: #1e1e1e;
+				text-align:center;
+				padding:10px;
+				margin:10px;
+				border-radius:7px;
+				transition:background 300ms ease-in;
+				display: inline-block;
+			}
+			.badge:hover {
+				background:#c6c5c5;
+			}
+			#container {
+				margin:auto;
+				text-align:center;
+			}
+	body
+		h1= message
+		- var values = badges;
+		div#container
+			ol
+				each val in values
+					div(class='badge')
+						h2=val.name
+						hr
+						p=val.description
+				else
+					li There are no values
