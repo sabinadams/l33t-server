@@ -12,51 +12,89 @@ MongoClient.connect('mongodb://root:798140sa@ds153239.mlab.com:53239/nodexpress'
   db = database;
 });
 
+var BadgeService = require('./services/badgeService');
+
 //Tells the server to parse out URL encoded form data
 app.use(bodyParser.urlencoded({extended: true}))
 
 
+app.use((req, res, next) => {
+  //Check for bearer token here
+
+  // if(req.headers.Authorization){
+  	// Bearer aklsdjfa;lksjdflakjsdlfkjas;dlkjf
+  	// let bearer = req.headers.Authorization.split(`Bearer `)[1];
+
+	// if(_authService.verifyToken(bearer)){
+  		// next();
+	// }
+  // }
+  // res.status(401).send({message: "Not authenticated."})
+  console.log('Validating Bearer Token...');
+  next();
+})
 
 //Tells the renderer which engine to use
 app.set('view engine', 'pug')
 
 
-app.get('/badges', (req, res) => {
-	db.collection('badges').find().toArray((err, data) => {
-		// //Renders the pugh index view
-		// res.render('index', {title: 'Home', message: 'List of badges!', badges: data});
-		res.send(data);
-	});
-})
+// ***************************************************************************************
+//
+// Badge Stuff
+//
+// ***************************************************************************************
 
-
-//Grabs a badge with a given ID
-app.get('/badge/:id', (req, res) => {
-	db.collection('badges').find( { ID: +req.params.id } ).toArray((err, data) => {
-		res.send(data);
+//The homepage that shows all the badges
+app.get('/', (req, res) => {
+	let _badgeService = new BadgeService(db);
+	_badgeService.getBadges((data) => {
+		res.render('index', {title: 'Home', message: 'List of badges!', badges: data});
 	});
 });
 
 //Grabs all the badges
+app.get('/badges', (req, res) => {
+	let _badgeService = new BadgeService(db);
+	_badgeService.getBadges((data) => {
+		res.send(data);
+	});
+});
+
+//Grabs a badge with a given ID
+app.get('/badge/:id', (req, res) => {
+	let _badgeService = new BadgeService(db);
+	_badgeService.getBadgeByID(+req.params.id, (data) => {
+		res.send(data);
+	});
+});
+
+//Renders the new badge page
 app.get('/newbadge', (req, res) => {
-	res.render('newBadge', { title: 'New Badge'})
+	res.render('newBadge', { title: 'New Badge'});
 });
 
 
 //Creates a new Badge
 app.post('/newbadge', (req, res) => {
-	db.collection('badges').save(req.body, (err, results) => {
-		if(err) throw err;
-		res.redirect('/');
+	let _badgeService = new BadgeService(db);
+	_badgeService.saveBadge(req.body, (data) => {
+		data ? res.redirect('/') : res.status(401).send({error: "There was a problem with this request."});
 	});
 });
+
+
+// ***************************************************************************************
+//
+// Other Stuff
+//
+// ***************************************************************************************
 
 // POST method route
 app.post('/', (req, res) => {
   res.send('POST request to the homepage')
-})
+});
 
 
 app.listen(3000, () => {
   console.log('Example app listening on port 3000!')
-})
+});
