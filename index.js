@@ -14,7 +14,7 @@ MongoClient.connect('mongodb://root:798140sa@ds153239.mlab.com:53239/nodexpress'
 
 //Services
 var BadgeService = require('./services/badgeService');
-var AuthService = require('./services/authService');\
+var AuthService = require('./services/authService');
 
 //Tells the server to parse out URL encoded form data
 app.use(bodyParser.urlencoded({extended: true}))
