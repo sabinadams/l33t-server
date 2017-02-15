@@ -12,30 +12,31 @@ MongoClient.connect('mongodb://root:798140sa@ds153239.mlab.com:53239/nodexpress'
   db = database;
 });
 
+//Services
 var BadgeService = require('./services/badgeService');
+var AuthService = require('./services/authService');\
 
 //Tells the server to parse out URL encoded form data
 app.use(bodyParser.urlencoded({extended: true}))
 
-
+//Middleware to check for bearer token and authenticate/validate user
 app.use((req, res, next) => {
-  //Check for bearer token here
-
-  // if(req.headers.Authorization){
-  	// Bearer aklsdjfa;lksjdflakjsdlfkjas;dlkjf
-  	// let bearer = req.headers.Authorization.split(`Bearer `)[1];
-
-	// if(_authService.verifyToken(bearer)){
-  		// next();
-	// }
-  // }
-  // res.status(401).send({message: "Not authenticated."})
-  console.log('Validating Bearer Token...');
-  next();
+  let _authService = new AuthService(db);
+  req.headers['Authorization'] = 'Bearer 12345'; //Except this wouldn't have to be set, it'll be coming from the client
+  if(req.headers.Authorization){
+  	let bearer = req.headers.Authorization.split(`Bearer `)[1];
+	_authService.verifyToken(bearer, (data) => {
+		if(data) next();
+		else res.status(401).send({message: "Not Authenticated"});
+	});
+  } else {
+	res.status(401).send({message: "Not Authenticated."})
+	next();
+  }
 })
 
 //Tells the renderer which engine to use
-app.set('view engine', 'pug')
+app.set('view engine', 'pug');
 
 
 // ***************************************************************************************
@@ -85,9 +86,11 @@ app.post('/newbadge', (req, res) => {
 
 // ***************************************************************************************
 //
-// Other Stuff
+// Auth Stuff
 //
 // ***************************************************************************************
+
+
 
 // POST method route
 app.post('/', (req, res) => {
