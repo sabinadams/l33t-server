@@ -22,9 +22,16 @@ app.use(bodyParser.urlencoded({extended: true}))
 //Middleware to check for bearer token and authenticate/validate user
 app.use((req, res, next) => {
   let _authService = new AuthService(db);
-  req.headers['Authorization'] = 'Bearer 12345'; //Except this wouldn't have to be set, it'll be coming from the client
-  if(req.headers.Authorization){
-  	let bearer = req.headers.Authorization.split(`Bearer `)[1];
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, authorization");
+  res.header('Access-Control-Allow-Methods', 'PUT, GET, POST, DELETE, OPTIONS');
+
+  if(req.method == 'OPTIONS'){
+  	res.status(200).send({message: "Preflight check successful"});
+  }
+  
+  if(req.headers.authorization){
+  	let bearer = req.headers.authorization.split(`Bearer `)[1];
 	_authService.verifyToken(bearer, (data) => {
 		if(data) next();
 		else res.status(401).send({message: "Not Authenticated"});
