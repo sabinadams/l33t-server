@@ -9,7 +9,7 @@ Pug/Jade, server-side rendered HTML, is also used on some API endpoints for quic
 - The server intercepts all requests and checks for an Authorization header with a bearer token. It then validates that a user in the database has this token before the request is allowed through
 - Grabs, removes, and places data into the badges collection in Mongo
 - Modular File Structure
-- API Endpoints ready for an application to access, and some server generated HTML pages visualizing real data that can be acccessed from the server itself
+- API Endpoints ready for an application to access, and some server generated HTML pages visualizing real data that can be accessed from the server itself
 
 ## How to use
 1. Clone this repository
