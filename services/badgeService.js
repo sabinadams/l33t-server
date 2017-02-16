@@ -19,7 +19,15 @@ module.exports = class BadgeService {
 
 	saveBadge(body, cb){
 		this.db.collection('badges').save(body, (err, results) => {
-			cb(err ? false : true);
+			console.log(results.ops);
+			cb(err ? false : results.ops[0]);
+		});
+	}
+
+	deleteBadge(ID, cb){
+		this.db.collection('badges').remove({ID: ID}, (err, res) => {
+			console.log(res);
+			cb(res);
 		});
 	}
 }

@@ -41,17 +41,35 @@ app.set('view engine', 'pug');
 
 // ***************************************************************************************
 //
+// Page Renders Stuff
+//
+// ***************************************************************************************
+
+	app.get('/', (req, res) => {
+		res.render('index', {title:"Badge Site"});
+	})
+
+	//The homepage that shows all the badges
+	app.get('/home', (req, res) => {
+		let _badgeService = new BadgeService(db);
+		_badgeService.getBadges((data) => {
+			res.render('home', {title: 'Home', message: 'List of badges!', badges: data});
+		});
+	});
+
+	//Renders the new badge page
+	app.get('/manageBadges', (req, res) => {
+		res.render('manageBadges', { title: 'Manage Badges'});
+	});
+
+
+// ***************************************************************************************
+//
 // Badge Stuff
 //
 // ***************************************************************************************
 
-//The homepage that shows all the badges
-app.get('/', (req, res) => {
-	let _badgeService = new BadgeService(db);
-	_badgeService.getBadges((data) => {
-		res.render('index', {title: 'Home', message: 'List of badges!', badges: data});
-	});
-});
+
 
 //Grabs all the badges
 app.get('/badges', (req, res) => {
@@ -69,19 +87,21 @@ app.get('/badge/:id', (req, res) => {
 	});
 });
 
-//Renders the new badge page
-app.get('/newbadge', (req, res) => {
-	res.render('newBadge', { title: 'New Badge'});
-});
-
-
 //Creates a new Badge
 app.post('/newbadge', (req, res) => {
 	let _badgeService = new BadgeService(db);
 	_badgeService.saveBadge(req.body, (data) => {
-		data ? res.redirect('/') : res.status(401).send({error: "There was a problem with this request."});
+		data ? res.send(data) : res.status(401).send({error: "There was a problem with this request."});
 	});
 });
+
+//Deletes a badge
+app.post('/deletebadge', (req, res) => {
+	let _badgeService = new BadgeService(db);
+	_badgeService.deleteBadge(+req.body.id, (data) => {
+		data ? res.status(200).send({success: "Successfully deleted badge."}) : res.status(401).send({error: "There was a problem with this request."});
+	});
+})
 
 
 // ***************************************************************************************

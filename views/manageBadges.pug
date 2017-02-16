@@ -2,6 +2,7 @@ html
 	head
 		title=title
 	body
+		h2="Add Badge"
 		form(action="/newbadge" method="POST")
 			label="Name"
 			input(type="text" id="name" placeholder="name" name="name")
@@ -9,3 +10,11 @@ html
 			label="Description"
 			input(type="text" id="description" placeholder="description" name="description")
 			button(type="submit") Submit
+		br
+		h2="Delete Badge"
+		form(action="/deletebadge" method="POST")
+			label="ID"
+			input(type="number" id="id" name="id")
+			button(type="submit") Submit
+		br
+		a(href="/home") Go Home
