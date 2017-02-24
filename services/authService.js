@@ -75,7 +75,7 @@ module.exports = class AuthService {
 				}
 			});
 		} else {
-			cb({status: 401, error: 'Either not all fields were filled out or the password did not match the password confirm'});
+			cb({ status: 401, error: 'Either not all fields were filled out or the password did not match the password confirm' });
 			
 		}
 	}
@@ -94,10 +94,7 @@ module.exports = class AuthService {
 					    // create reusable transporter object using the default SMTP transport
 					    let transporter = nodemailer.createTransport({
 					        service: 'gmail',
-					        auth: {
-					            user: 'ileet1337@gmail.com',
-					            pass: 'Leet1337[]'
-					        }
+					        auth: { user: 'ileet1337@gmail.com', pass: 'Leet1337[]' }
 					    });
 
 					    // setup email data with unicode symbols
@@ -112,25 +109,16 @@ module.exports = class AuthService {
 					    transporter.sendMail(mailOptions, (error, info) => {
 					        if (error) {
 					        	console.log(error);
-					            cb({
-					            	status: 401,
-					            	message: "There was a problem sending the email."
-					            });
+					            cb({ status: 401, message: "There was a problem sending the email." });
 					        }
-					        cb({
-					        	status: 200,
-					        	message: `An email containing the verification code was sent to ${email}. This code is valid for 15 minutes.`
-					        });
+					        cb({ status: 200, message: `An email containing the verification code was sent to ${email}. This code is valid for 15 minutes.` });
 					    });   
 
 					});
 					
 				});
 			} else {
-				cb({
-					status: 401,
-					message: 'There was no user with that email.'
-				});
+				cb({ status: 401, message: 'There was no user with that email.' });
 			}
 		});
 	}
@@ -140,10 +128,7 @@ module.exports = class AuthService {
 			if(res.length == 1){
 				let user = res[0];
 				if(user.newPass != user.newPassConfirm){
-					cb({
-						status: 401,
-						message: 'The password did not match the confirm password'
-					});
+					cb({ status: 401, message: 'The password did not match the confirm password' });
 				}
 				let currTime = new Date().getTime();
 				if(this.getMinutesBetweenDates(new Date(user.changeTimestamp), new Date(currTime) ) <= 15){
@@ -164,10 +149,7 @@ module.exports = class AuthService {
 					});
 				}
 			} else {
-				cb({
-					status: 401,
-					message: "Invalid code."
-				});
+				cb({ status: 401, message: "Invalid code." });
 			}
 		});
 	}
