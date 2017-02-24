@@ -16,7 +16,7 @@ MongoClient.connect('mongodb://root:798140sa@ds153239.mlab.com:53239/nodexpress'
 var AuthService = require('./services/authService');
 
 app.use( bodyParser.json() ); // to support JSON-encoded bodies
-app.use(bodyParser.urlencoded({extended: true})) //Tells the server to parse out URL encoded form data
+app.use( bodyParser.urlencoded({ extended: true }) ); //Tells the server to parse out URL encoded form data
 
 //Middleware to check for bearer token and authenticate/validate user
 app.use((req, res, next) => {
@@ -28,23 +28,26 @@ app.use((req, res, next) => {
   if(req.method == 'OPTIONS'){
   	return res.status(200).send({message: "Preflight check successful"});
   }
-  if(req.url == '/login'){
+  if(req.url == '/login' 
+    || req.url == '/register'
+    || req.url == '/forgotpasswordemail'
+    || req.url == '/forgotpasschangepass'){
   	return next();
   }
   if(req.headers.authorization){
   	let bearer = req.headers.authorization.split(`Bearer `)[1];
-	_authService.verifyToken(bearer, (data) => {
-		if(data) return next();
-		else return res.status(401).send({message: "Not Authenticated"});
-	});
+  	_authService.verifyToken(bearer, (data) => {
+  		if(data) return next();
+  		else return res.status(401).send({message: "Not Authenticated"});
+  	});
   } else {
-	return res.status(401).send({message: "Not Authenticated."})
+	  return res.status(401).send({message: "Not Authenticated."})
   }
-})
+
+});
 
 //Tells the renderer which engine to use
 app.set('view engine', 'pug');
-
 
 // ***************************************************************************************
 //
@@ -55,15 +58,6 @@ app.set('view engine', 'pug');
 // app.get('/', (req, res) => {
 // 	res.render('index', {title:"Badge Site"});
 // });
-
-//Grabs a badge with a given ID
-// app.get('/badge/:id', (req, res) => {
-// 	let _badgeService = new BadgeService(db);
-// 	_badgeService.getBadgeByID(+req.params.id, (data) => {
-// 		res.send(data);
-// 	});
-// });
-
 
 // ***************************************************************************************
 //
@@ -78,8 +72,40 @@ app.post('/login', (req, res) => {
 	});
 });
 
+app.post('/register', (req, res) => {
+  let _authService = new AuthService(db);
+  _authService.register(req.body, data => {
+    return res.send(data);
+  });
+});
 
+app.post('/forgotpasswordemail', (req, res) => {
+  let _authService = new AuthService(db);
+  _authService.forgotPasswordEmail(req.body.email, data => {
+    return res.send(data);
+  });
+}); 
+
+app.post('/forgotpasschangepass', (req, res) => {
+  let _authService = new AuthService(db);
+  _authService.forgotPasswordChangePass(req.body.data, data => {
+    return res.send(data);
+  });
+}); 
 
 app.listen(3000, () => {
   console.log('Example app listening on port 3000!')
 });
+
+
+
+
+
+
+
+
+
+
+
+
+
