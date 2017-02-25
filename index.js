@@ -31,7 +31,8 @@ app.use((req, res, next) => {
   if(req.url == '/login' 
     || req.url == '/register'
     || req.url == '/forgotpasswordemail'
-    || req.url == '/forgotpasschangepass'){
+    || req.url == '/forgotpasschangepass'
+  ){
   	return next();
   }
   if(req.headers.authorization){
